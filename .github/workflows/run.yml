@@ -17,5 +17,5 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - run: npm install googleapis
+      - run: npm install googleapis dotenv
       - run: node index.js
