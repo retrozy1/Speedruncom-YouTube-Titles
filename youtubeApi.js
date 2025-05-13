@@ -1,4 +1,6 @@
 import { google } from 'googleapis';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const setTitle = async (id, title) => {
     const authClient = new google.auth.OAuth2({
@@ -40,12 +42,12 @@ export const setTitle = async (id, title) => {
 
 export const videoIsMine = async (videoId) => {
     const authClient = new google.auth.OAuth2({
-        clientId: process.env.clientId,
-        clientSecret: process.env.clientSecret
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET
     });
 
     authClient.setCredentials({
-        refresh_token: process.env.refresh_token
+        refresh_token: process.env.REFRESH_TOKEN
     });
 
     const youtube = google.youtube({
