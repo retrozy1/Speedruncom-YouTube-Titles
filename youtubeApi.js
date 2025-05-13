@@ -2,12 +2,12 @@ import { google } from 'googleapis';
 
 export const setTitle = async (id, title) => {
     const authClient = new google.auth.OAuth2({
-        clientId: process.env.clientId,
-        clientSecret: process.env.clientSecret
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET
     });
 
     authClient.setCredentials({
-        refresh_token: process.env.refresh_token
+        refresh_token: process.env.REFRESH_TOKEN
     });
 
     const youtube = google.youtube({
