@@ -1,8 +1,9 @@
 import { setTitle, videoIsMine } from './youtubeApi.js';
 import fs from 'fs/promises';
+/*
 import dotenv from 'dotenv';
-
 dotenv.config();
+*/
 
 let titleHistory = {};
 try {
