@@ -1,6 +1,6 @@
 import { setTitle, videoIsMine } from './youtubeApi.js';
 import fs from 'fs/promises';
-const { execSync } = require('child_process');
+import { execSync } from 'child_process';
 
 let titleHistory = {};
 let changedTitles = [];
