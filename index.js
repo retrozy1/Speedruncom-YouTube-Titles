@@ -7,7 +7,6 @@ let changedTitles = [];
 try {
   const data = await fs.readFile('titles.json', 'utf-8');
   titleHistory = JSON.parse(data);
-  oldTitleHistory = JSON.parse(data);
 } catch (e) {
   if (e.code !== 'ENOENT') throw e; // Ignore if file doesn't exist
 }
