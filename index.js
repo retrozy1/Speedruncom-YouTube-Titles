@@ -1,10 +1,13 @@
 import { setTitle, videoIsMine } from './youtubeApi.js';
 import fs from 'fs/promises';
+const { execSync } = require('child_process');
 
 let titleHistory = {};
+let changedTitles = [];
 try {
   const data = await fs.readFile('titles.json', 'utf-8');
   titleHistory = JSON.parse(data);
+  oldTitleHistory = JSON.parse(data);
 } catch (e) {
   if (e.code !== 'ENOENT') throw e; // Ignore if file doesn't exist
 }
@@ -157,14 +160,26 @@ for (const { video, comment, place, gameId, categoryId, levelId, valueIds, playe
             await setTitle(videoId, title);
             console.log('Done.');
             titleHistory[id] = title;
+            changedTitles.push(id);
         } catch (err) {
             if (err.code === 403 || err.response?.status === 403) {
                 console.warn(`Rate limit hit for ${videoId}: ${err.message}`);
             } else {
                 throw err;
             }
-        } finally {
-            await fs.writeFile('titles.json', JSON.stringify(titleHistory, null, 2));
         }
     }
+}
+
+if (changedTitles.length) {
+    await fs.writeFile('titles.json', JSON.stringify(titleHistory, null, 2));
+
+    execSync('git config user.name "github-actions[bot]"');
+    execSync('git config user.email "github-actions[bot]@users.noreply.github.com"');
+    execSync('git add titles.json');
+    execSync(`git commit -m "Added/changed ${changedTitles.join(', ')}"`);
+    execSync('git push');
+    console.log('Changes pushed successfully');
+} else {
+    console.log('No titles changed.')
 }
