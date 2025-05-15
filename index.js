@@ -1,17 +1,17 @@
-import { setTitle, videoIsMine } from './youtubeApi.js';
+import { getVideo, updateVideo } from './youtubeApi.js';
 import fs from 'fs/promises';
 import { execSync } from 'child_process';
 
+const CHANNEL_ID = 'UCwTzKBHy-PJ5bi8n7yr0Q7g';
+const USER_ID = 'jm7ldezj';
+
 let titleHistory = {};
 let changedTitles = [];
-try {
-  const data = await fs.readFile('titles.json', 'utf-8');
-  titleHistory = JSON.parse(data);
-} catch (e) {
-  if (e.code !== 'ENOENT') throw e; // Ignore if file doesn't exist
-}
 
-function ordinalSuffix(n) {
+const data = await fs.readFile('titles.json', 'utf-8');
+titleHistory = JSON.parse(data);
+
+const ordinalSuffix = (n) => {
   const mod100 = n % 100;
   if (mod100 >= 11 && mod100 <= 13) return 'TH';
 
@@ -22,7 +22,7 @@ function ordinalSuffix(n) {
   return 'TH';
 }
 
-function formatTime(rawSeconds, alwaysShowMs = false) {
+const formatTime = (rawSeconds, alwaysShowMs = false) => {
   const totalMs = Math.floor(rawSeconds * 1000);
   const hours = Math.floor(totalMs / (3600 * 1000));
   const minutes = Math.floor((totalMs % (3600 * 1000)) / (60 * 1000));
@@ -58,9 +58,7 @@ const videoToId = (url) => {
     return url.split('/')[3].split('?')[0];
 };
 
-const { categories, games, levels, players, runs, values, variables } = await fetch('https://www.speedrun.com/api/v2/GetUserLeaderboard?userId=jm7ldezj').then(x => x.json());
-
-runs.slice(2);
+const { categories, games, levels, players, runs, values, variables } = await fetch(`https://www.speedrun.com/api/v2/GetUserLeaderboard?userId=${USER_ID}`).then(x => x.json());
 
 for (const { video, comment, place, gameId, categoryId, levelId, valueIds, playerIds, time, igt, id } of runs) {
 
@@ -75,7 +73,7 @@ for (const { video, comment, place, gameId, categoryId, levelId, valueIds, playe
         rank = 'OBSOLETE';
     }
 
-    let { name: game, url } = games.find(x => x.id === gameId);
+    let { name: game, url: gameUrl } = games.find(x => x.id === gameId);
 
     let category;
     const { name: categoryName, enforceMs } = categories.find(x => x.id === categoryId);
@@ -113,7 +111,7 @@ for (const { video, comment, place, gameId, categoryId, levelId, valueIds, playe
     }
 
     let runners = [];
-    for (const playerId of playerIds.filter(x => x !== 'jm7ldezj')) {
+    for (const playerId of playerIds.filter(x => x !== USER_ID)) {
         runners.push(players.find(x => x.id === playerId).name);
     }
 
@@ -144,27 +142,22 @@ for (const { video, comment, place, gameId, categoryId, levelId, valueIds, playe
 
     if (titleHistory[id] !== title) {
         const videoUrls = (video + ' ' + (comment || '')).split(/\s+/).filter(x => x.slice(0, 4) === 'http');
-        let videoId;
         for (const url of videoUrls) {
-            if (await videoIsMine(videoToId(url))) {
-                videoId = videoToId(url);
+            let snippet = await getVideo(videoToId(url));
+            if (snippet?.channelId === CHANNEL_ID) {
+                console.log(`Setting ${snippet.id} to "${title}"...`);
+
+                snippet.title = title;
+                if (!titleHistory[id]) {
+                    if (snippet.description !== '') snippet.description = '\n\n';
+                    snippet.description += `Run on Speedrun.com: https://www.speedrun.com/${gameUrl}/runs/${id}`;
+                }
+
+                await updateVideo(snippet.id, snippet);
+                console.log('Done.');
+                changedTitles.push(id);
+                titleHistory[id] = title;
                 break;
-            }
-        }
-        if (!videoId) continue;
-
-        console.log(`Setting ${videoId} to "${title}"...`);
-
-        try {
-            await setTitle(videoId, title);
-            console.log('Done.');
-            titleHistory[id] = title;
-            changedTitles.push(id);
-        } catch (err) {
-            if (err.code === 403 || err.response?.status === 403) {
-                console.warn(`Rate limit hit for ${videoId}: ${err.message}`);
-            } else {
-                throw err;
             }
         }
     }
