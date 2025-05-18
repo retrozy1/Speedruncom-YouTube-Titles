@@ -145,7 +145,7 @@ for (const { video, comment, place, gameId, categoryId, levelId, valueIds, playe
         for (const url of videoUrls) {
             let snippet = await getVideo(videoToId(url));
             if (snippet?.channelId === CHANNEL_ID) {
-                console.log(`Setting ${snippet.id} to "${title}"...`);
+                console.log(`Setting ${videoToId(url)} to "${title}"...`);
 
                 snippet.title = title;
                 if (!titleHistory[id]) {
@@ -153,7 +153,7 @@ for (const { video, comment, place, gameId, categoryId, levelId, valueIds, playe
                     snippet.description += `Run on Speedrun.com: https://www.speedrun.com/${gameUrl}/runs/${id}`;
                 }
 
-                await updateVideo(snippet.id, snippet);
+                await updateVideo(videoToId(url), snippet);
                 console.log('Done.');
                 changedTitles.push(id);
                 titleHistory[id] = title;
