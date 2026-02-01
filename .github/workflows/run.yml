@@ -1,4 +1,4 @@
-name: Run Node Script Every 10 Minutes
+name: Update titles
 
 on:
   schedule:
@@ -17,9 +17,9 @@ jobs:
       REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: '18'
-      - run: npm install
-      - run: node index.js
+          bun-version: latest
+      - run: bun i --frozen-lockfile
+      - run: bun run index.ts
