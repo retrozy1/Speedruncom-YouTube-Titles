@@ -181,10 +181,10 @@ if (modifiedTitles > 0 || addedTitles > 0) {
   if (addedTitles > 0) {
     message += `Added ${addedTitles} title${addedTitles !== 1 && 's'}`;
     if (modifiedTitles > 0) {
-      message += `and modified ${modifiedTitles} title${modifiedTitles !== 1 && 's'}`
+      message += `and modified ${modifiedTitles} title${modifiedTitles !== 1 ? 's' : ''}`
     }
   } else {
-    message += `Modified ${modifiedTitles} title${modifiedTitles !== 1 && 's'}`;
+    message += `Modified ${modifiedTitles} title${modifiedTitles !== 1 ? 's': ''}`;
   }
 
   await fs.writeFile('titles.json', JSON.stringify(titleHistory, null, 2));
