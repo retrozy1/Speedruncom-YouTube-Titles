@@ -54,12 +54,15 @@ const formatTime = (rawSeconds: number, alwaysShowMs = false) => {
 }
 
 const videoToId = (url: string) => {
+  let videoId: string;
   if (url.includes('youtube.com')) {
     const id = new URL(url).searchParams.get('v');
     if (id === null) throw new Error("The search paramater was not found.")
-    return id;
+    videoId = id;
   }
-  return url.split('/')[3].split('?')[0];
+  videoId = url.split('/')[3].split('?')[0];
+
+  return videoId.replaceAll(",", "")
 };
 
 const client = new Client();
