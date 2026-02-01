@@ -24,6 +24,7 @@ export const getVideo = async (id: string) => {
 
 export const updateVideo = async (id: string, snippet: youtube_v3.Schema$VideoSnippet) => {
   await youtube.videos.update({
+    part: ["snippet"],
     requestBody: {
       id,
       snippet
