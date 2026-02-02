@@ -163,9 +163,9 @@ for (const run of runs) {
       if (titleHistory[run.id]) {
         if (snippet.description !== '') snippet.description = '\n\n';
         snippet.description += `Run on Speedrun.com: https://www.speedrun.com/${gameUrl}/runs/${run.id}`;
-        addedTitles++;
-      } else {
         modifiedTitles++;
+      } else {
+        addedTitles++;
       }
 
       await updateVideo(videoToId(url), snippet);
