@@ -151,6 +151,7 @@ for (const run of runs) {
     let runText = '';
     if (run.video) runText += run.video
     if (run.comment) runText += ` ${run.comment}`;
+    console.log("NEW RUN DATA", run);
 
     const videoUrls = runText.split(/\s+/).filter(x => x.startsWith("http"));
     for (const url of videoUrls) {
