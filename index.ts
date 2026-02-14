@@ -67,7 +67,7 @@ const videoToId = (url: string) => {
 
 const client = new Client();
 
-const { categories, games, levels, players, runs, values, variables } = (await client.get("GetUserLeaderboard", { userId: USER_ID })).data;
+const { categories, games, levels, players, runs, values, variables } = (await client.post("GetUserLeaderboard", { userId: USER_ID })).data;
 
 for (const run of runs) {
   let rank: string;
