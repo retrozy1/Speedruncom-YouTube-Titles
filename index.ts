@@ -180,9 +180,9 @@ for (const run of runs) {
 if (modifiedTitles > 0 || addedTitles > 0) {
   let message = "";
   if (addedTitles > 0) {
-    message += `Added ${addedTitles} title${addedTitles !== 1 && 's'}`;
+    message += `Added ${addedTitles} title${addedTitles !== 1 ? 's' : ''}`;
     if (modifiedTitles > 0) {
-      message += `and modified ${modifiedTitles} title${modifiedTitles !== 1 ? 's' : ''}`
+      message += ` and modified ${modifiedTitles} title${modifiedTitles !== 1 ? 's' : ''}`
     }
   } else {
     message += `Modified ${modifiedTitles} title${modifiedTitles !== 1 ? 's': ''}`;
